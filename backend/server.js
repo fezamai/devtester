@@ -2,6 +2,22 @@
 
 const Hapi = require('@hapi/hapi');
 
+const mongoose = require('mongoose');
+
+const mongoURL = "mongodb+srv://qaninja:qaninja@cluster0.xucwy.mongodb.net/zaplinktreinodb?retryWrites=true&w=majority"
+
+mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
+
+//implementando um listener para saber se a conexão foi feita com sucesso
+mongoose.connection.on('connected', () => {
+    console.log('MongoDB Connected');
+})
+
+//implementando um listener para saber se a conexão deu erro
+mongoose.connection.on('error', (error) => {
+    console.log('MongoDB Error: ' + error);
+})
+
 //importanto a rota de contato
 const contactRoutes =  require('./routes/contact.routes')
 
