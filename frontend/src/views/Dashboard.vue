@@ -5,9 +5,7 @@
       <h4 class="title is-4">Seu gerenciador digital de contatos</h4>
 
       <button
-        class="button is-success is-medium"
-        @click="showContactAddModal = true"
-      >+</button>
+        class="button is-success is-medium" @click="showContactAddModal = true">+</button>
 
       <div class="columns is-multiline">
         <div
@@ -53,18 +51,24 @@
           <div class="modal-card" style="width: 450px">
             <header class="modal-card-head">
               <p class="modal-card-title">Novo Contato</p>
-              <button type="button" class="delete" @click="showContactAddModal=false"/>
+              <button
+                type="button"
+                class="delete"
+                @click="showContactAddModal = false"
+              />
             </header>
             <section class="modal-card-body">
               <div class="field input-full-name">
                 <input
                   class="input is-primary"
+                  v-model="form.name"
                   placeholder="Nome completo"
                 />
               </div>
               <div class="field input-number">
                 <input
                   class="input is-primary"
+                  v-model="form.number"
                   placeholder="WhatsApp"
                 />
               </div>
@@ -72,12 +76,15 @@
               <div class="field text-description">
                 <textarea
                   class="textarea is-primary"
+                  v-model="form.description"
                   placeholder="Assunto"
                 ></textarea>
               </div>
             </section>
             <footer class="modal-card-foot">
-              <button class="button is-success">Cadastrar</button>
+              <button type="button" class="button is-success" @click="create">
+                Cadastrar
+              </button>
             </footer>
           </div>
         </form>
@@ -107,6 +114,14 @@ export default {
     };
   },
   methods: {
+    create() {
+      console.log(this.form);
+      window.axios.post("/contacts", this.form).then(async (res) => {
+        await res.data;
+        this.showContactAddModal = false;
+        this.list();
+      });
+    },
     list() {
       this.isLoading = true;
       window.axios.get("/contacts").then(async (res) => {
