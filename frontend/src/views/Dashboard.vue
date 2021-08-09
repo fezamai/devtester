@@ -4,10 +4,9 @@
     <div class="container">
       <h4 class="title is-4">Seu gerenciador digital de contatos</h4>
 
-      <button
-        class="button is-success is-medium" @click="showContactAddModal = true">+</button>
-
-      <div class="columns is-multiline">
+      <button  id="addNewContact" class="button is-success is-medium" @click="showContactAddModal = true">+</button>
+ 
+      <div class="contact-list columns is-multiline">
         <div
           class="column is-4"
           v-for="contact in contactList"
@@ -59,30 +58,20 @@
             </header>
             <section class="modal-card-body">
               <div class="field input-full-name">
-                <input
-                  class="input is-primary"
-                  v-model="form.name"
-                  placeholder="Nome completo"
-                />
+                <input class="input is-primary" v-model="form.name" placeholder="Nome completo"/>
+                <small class="has-text-danger" v-if="errorName === true">Nome é obrigatório.</small>
               </div>
               <div class="field input-number">
-                <input
-                  class="input is-primary"
-                  v-model="form.number"
-                  placeholder="WhatsApp"
-                />
+                <input class="input is-primary" v-model="form.number" placeholder="WhatsApp"/>
+                <small class="has-text-danger" v-if="errorNumber === true">WhatsApp é obrigatório.</small>
               </div>
-
               <div class="field text-description">
-                <textarea
-                  class="textarea is-primary"
-                  v-model="form.description"
-                  placeholder="Assunto"
-                ></textarea>
+                <textarea class="textarea is-primary" v-model="form.description" placeholder="Assunto"></textarea>
+                <small class="has-text-danger" v-if="errorDescription === true">Assunto é obrigatório.</small>
               </div>
-            </section>
+            </section> 
             <footer class="modal-card-foot">
-              <button type="button" class="button is-success" @click="create">
+              <button  id="saveButton" type="button" class="button is-success" @click="create">
                 Cadastrar
               </button>
             </footer>
@@ -115,12 +104,29 @@ export default {
   },
   methods: {
     create() {
-      console.log(this.form);
-      window.axios.post("/contacts", this.form).then(async (res) => {
-        await res.data;
-        this.showContactAddModal = false;
-        this.list();
-      });
+      this.errorName = false;
+      this.errorNumber = false;
+      this.errorDescription = false;
+
+      if (this.form.name === "") {
+        this.errorName = true;
+      }
+
+      if (this.form.number === "") {
+        this.errorNumber = true;
+      }
+
+      if (this.form.description === "") {
+        this.errorDescription = true;
+      }
+
+      if (this.errorName === false && this.errorNumber === false && this.errorDescription === false) {
+        window.axios.post("/contacts", this.form).then(async (res) => {
+          await res.data;
+          this.showContactAddModal = false;
+          this.list();
+        });
+      }
     },
     list() {
       this.isLoading = true;
